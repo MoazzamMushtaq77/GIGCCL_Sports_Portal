@@ -20,7 +20,7 @@ class Match(models.Model):
     def __str__(self):
         return f"{self.team1} vs {self.team2} ({self.sport.name})"
 
-
+     
 class Coach(models.Model):
     name = models.CharField(max_length=100)
     designation = models.CharField(max_length=100)
