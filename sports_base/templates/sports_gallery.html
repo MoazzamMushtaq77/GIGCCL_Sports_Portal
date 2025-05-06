@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .gallery-container {
+        background-color: #FFE2CD;
+        padding: 30px 15px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .gallery-header {
+        background-color: #964734;
+        color: white;
+        padding: 15px 25px;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        width: 100%;
+        max-width: 1200px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        width: 100%;
+        max-width: 1200px;
+    }
+
+    .gallery-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .gallery-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .gallery-title {
+        color: #964734;
+        font-weight: 600;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .gallery-description {
+        color: #444;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .no-sports {
+        color: #964734;
+        font-size: 1.1rem;
+        text-align: center;
+        padding: 30px;
+    }
+</style>
+
+<div class="gallery-container">
+    <!-- Page Header -->
+    <div class="gallery-header">🏟️ Sports Gallery</div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid">
+        {% for sport in page_obj %}
+        <div class="gallery-card">
+            <img src="{{ sport.image.url }}" alt="{{ sport.title }}" class="gallery-image">
+            <h3 class="gallery-title">{{ sport.title }}</h3>
+            <p class="gallery-description">{{ sport.description }}</p>
+        </div>
+        {% empty %}
+        <div class="col-12 no-sports">
+            No sports available in the gallery.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
