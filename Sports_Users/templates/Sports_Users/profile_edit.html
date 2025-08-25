@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<style>
+:root {
+    --primary-color: #964734;
+    --primary-light: #ffe7d5;
+    --bg-light: #FFE2CD;
+    --text-main: #4A3B34;
+    --secondary-dark: #3A1C07;
+    --secondary-hover: #5C2E0A;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    background: url("{% static 'media/giccl.png' %}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    z-index: -1;
+}
+
+#profile-edit-page {
+    padding: 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+#profile-edit-page .profile-wrapper {
+    max-width: 800px;
+    width: 100%;
+    background: #fff5ec;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px #00000026;
+    animation: fadeSlideIn 0.5s ease;
+}
+
+@keyframes fadeSlideIn {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+#profile-edit-page .profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#profile-edit-page .profile-pic-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+#profile-edit-page .profile-pic {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: zoomIn 0.5s ease;
+}
+
+#profile-edit-page .camera-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 20px;
+    color: #fff;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+}
+
+#profile-edit-page .camera-icon:hover {
+    background-color: var(--secondary-hover);
+}
+
+#profile-edit-page .clear-image {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+#profile-edit-page .profile-header h2 {
+    margin-top: 1rem;
+    color: var(--secondary-dark);
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+#profile-edit-page .section-title {
+    background-color: var(--primary-light);
+    color: var(--secondary-dark);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: left;
+    font-size: 1.05rem;
+}
+
+#profile-edit-page .profile-info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#profile-edit-page .profile-info-table td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #eee;
+    color: var(--text-main);
+}
+
+#profile-edit-page .profile-info-table td:first-child {
+    font-weight: 600;
+    color: var(--primary-color);
+    width: 35%;
+}
+
+#profile-edit-page .profile-info-table .form-control {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100%;
+}
+
+#profile-edit-page .profile-info-table .view-only {
+    background-color: #f1f1f1;
+    border: none;
+    padding: 5px;
+    width: 100%;
+    cursor: not-allowed;
+}
+
+#profile-edit-page .btn-save {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+#profile-edit-page .btn-save:hover {
+    background-color: var(--secondary-hover);
+}
+
+#profile-edit-page .btn-discard {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+#profile-edit-page .btn-discard:hover {
+    background-color: #b02a37;
+}
+
+@media (max-width: 768px) {
+    #profile-edit-page .profile-wrapper {
+        padding: 1.5rem;
+    }
+
+    #profile-edit-page .profile-pic {
+        width: 100px;
+        height: 100px;
+    }
+
+    #profile-edit-page .profile-header h2 {
+        font-size: 1.3rem;
+    }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<div id="profile-edit-page">
+    <div class="profile-wrapper">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-pic-wrapper">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" class="profile-pic" alt="Profile Picture" id="profile-pic-display">
+                    {% else %}
+                        <img src="{% static 'media/image.png' %}" class="profile-pic" alt="Default Profile" id="profile-pic-display">
+                    {% endif %}
+                    <label for="profile_picture" class="camera-icon">
+                        <i class="bi bi-camera-fill"></i>
+                    </label>
+                    <input type="file" id="profile_picture" name="profile_picture" style="display: none;" accept="image/*">
+                </div>
+                <div class="clear-image">
+                    <input type="checkbox" name="profile_picture_clear" id="profile_picture_clear">
+                    <label for="profile_picture_clear">Clear Image</label>
+                </div>
+                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+            </div>
+
+            <!-- User Information -->
+            <div class="section-title">Edit Information</div>
+            <table class="profile-info-table">
+                <tr>
+                    <td>Name:</td>
+                    <td>{{ form.first_name|add_class:"form-control" }}</td>
+                </tr>
+                <tr>
+                    <td>Father Name:</td>
+                    <td>{{ form.father_name|add_class:"form-control" }}</td>
+                </tr>
+                <tr>
+                    <td>CNIC:</td>
+                    <td>{{ form.cnic|add_class:"form-control"|attr:"maxlength:15" }}</td>
+                </tr>
+                <tr>
+                    <td>Date of Birth:</td>
+                    <td>{{ form.dob|add_class:"form-control" }}</td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td><input type="text" class="view-only" value="{{ user.email }}" readonly></td>
+                </tr>
+                <tr>
+                    <td>Phone:</td>
+                    <td>{{ form.phone_number|add_class:"form-control"|attr:"maxlength:12" }}</td>
+                </tr>
+                <tr>
+                    <td>Sports:</td>
+                    <td><input type="text" class="view-only" value="{{ player.sport }}" readonly></td>
+                </tr>
+                <tr>
+                    <td>College Roll No:</td>
+                    <td><input type="text" class="view-only" value="{{ player.college_roll_no }}" readonly></td>
+                </tr>
+                <tr>
+                    <td>Address:</td>
+                    <td>{{ form.address|add_class:"form-control" }}</td>
+                </tr>
+            </table>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-center mt-3">
+                <button type="submit" class="btn btn-save">Save Changes</button>
+                <a href="{% url 'Sports_Users:profile_view' %}" class="btn btn-discard">Discard Changes</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('profile_picture');
+    const cameraIcon = document.querySelector('.camera-icon');
+    const profilePicDisplay = document.getElementById('profile-pic-display');
+    const clearCheckbox = document.getElementById('profile_picture_clear');
+    const cnicInput = document.querySelector('input[name="cnic"]');
+    const phoneInput = document.querySelector('input[name="phone_number"]');
+
+    // Handle camera icon click
+    cameraIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        fileInput.click();
+    });
+
+    // Handle file selection and preview
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profilePicDisplay.src = e.target.result;
+                clearCheckbox.checked = false;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle clear checkbox
+    clearCheckbox.addEventListener('change', function(e) {
+        if (e.target.checked) {
+            profilePicDisplay.src = '{% static "media/image.png" %}';
+            fileInput.value = '';
+        }
+    });
+
+    // Format CNIC input (12345-1234567-1)
+    cnicInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+        if (value.length > 13) value = value.slice(0, 13); // Limit to 13 digits
+        let formattedValue = '';
+        if (value.length > 0) {
+            formattedValue = value.slice(0, 5);
+            if (value.length > 5) {
+                formattedValue += '-' + value.slice(5, 12);
+                if (value.length > 12) {
+                    formattedValue += '-' + value.slice(12, 13);
+                }
+            }
+        }
+        e.target.value = formattedValue;
+    });
+
+    // Format phone number input (1234-1234567)
+    phoneInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        if (value.length > 4) {
+            value = value.slice(0, 4) + '-' + value.slice(4);
+        }
+        e.target.value = value;
+    });
+});
+</script>
+{% endblock %}

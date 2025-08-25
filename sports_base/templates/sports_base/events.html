@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Events - GIGCCL Sports Portal{% endblock %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+<style>
+  :root {
+    --primary-color: #964734;
+    --bg-light: #FFE2CD;
+    --card-text: #5A3922;
+  }
+
+  body {
+    background-color: var(--bg-light);
+    font-family: 'Poppins', sans-serif;
+  }
+
+  {% comment %} .events-container {
+    background-color: var(--bg-light);
+    padding: 30px 15px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+  } {% endcomment %}
+
+  .page-header {
+    background: linear-gradient(90deg, #964734, #b85b4a);
+    color: #fff;
+    padding: 15px;
+    font-size: 25px;
+    font-weight: 400;
+    text-align: center;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+  }
+
+  .events-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  .event-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+  }
+
+  .event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .event-title {
+    color: var(--primary-color);
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .event-meta {
+    font-size: 14px;
+    color: #5e4535;
+    margin-bottom: 6px;
+  }
+
+  .event-description {
+    color: #4A3B34;
+    font-size: 14.5px;
+    line-height: 1.5;
+    margin-top: 6px;
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .pagination {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .pagination .page-link {
+    color: var(--primary-color);
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .pagination .page-link:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .page-indicator {
+    padding: 6px 16px;
+    font-weight: 500;
+    color: var(--card-text);
+    background-color: transparent;
+    border: none;
+    border-radius: 50px;
+    cursor: default;
+  }
+
+  .pagination .disabled .page-link {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  @media (min-width: 1200px) {
+    .events-list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1199.98px) {
+    .events-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .events-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .events-header {
+      font-size: 22px;
+    }
+
+    .event-title {
+      font-size: 18px;
+    }
+
+    .pagination .page-link,
+    .page-indicator {
+      font-size: 0.95rem;
+      padding: 6px 12px;
+    }
+  }
+</style>
+
+<div class="container py-4">
+  <div class="page-header">Upcoming Events🗓️</div>
+
+  <div class="events-list">
+    {% for event in page_obj %}
+    <div class="event-card" data-aos="fade-up" data-aos-duration="900">
+      <h3 class="event-title">{{ event.title }}</h3>
+      <p class="event-meta"><i class="bi bi-calendar-event"></i> <strong>Started From:</strong> {{ event.date }}</p>
+      <p class="event-meta"><i class="bi bi-geo-alt"></i> <strong>Location:</strong> {{ event.location }}</p>
+      <p class="event-description">{{ event.description }}</p>
+    </div>
+    {% empty %}
+    <p class="text-center mt-4">No upcoming events available.</p>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="pagination-container">
+    <nav aria-label="Events Page Navigation">
+      <ul class="pagination">
+        <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+          <a class="page-link" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}">Previous</a>
+        </li>
+        <li class="page-indicator">
+          Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </li>
+        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+          <a class="page-link" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+</div>
+
+<!-- AOS JS for animation -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>AOS.init();</script>
+{% endblock content %}

@@ -1,0 +1,946 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Player Registration - GIGCCL Sports Portal{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{% static 'media/gigcclpic2.png' %}") no-repeat center center fixed;
+    background-size: cover;
+    backdrop-filter: blur(8px);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .player-registration {
+    padding: 2.5rem 0;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card {
+    background: #fff5ec;
+    border-radius: 1.2rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+  }
+
+  h2 {
+    font-weight: 700;
+    color: #8b4513; /* Updated color for GIGCCL Sports Portal */
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    color: #6c757d;
+    font-weight: 400;
+  }
+
+  .form-control, .form-select {
+    border: 1px solid #e0e0e0;
+    border-radius: 0.6rem;
+    padding: 0.6rem 0.85rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    font-size: 0.95rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    height: 38px;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #f5a623;
+    box-shadow: 0 0 10px rgba(245, 166, 35, 0.4);
+    outline: none;
+    background-color: #fff;
+  }
+
+  .number-input::-webkit-inner-spin-button,
+  .number-input::-webkit-outer-spin-button {
+    opacity: 1;
+    margin-right: 10px;
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    max-height: 100px;
+    height: auto;
+  }
+
+  .btn-submit {
+    background-color: #8b4513; /* Updated button color */
+    color: white;
+    padding: 0.6rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.6rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn-submit:hover {
+    background-color: #a0522d; /* Slightly lighter shade for hover */
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .profile-picture-container {
+    position: relative;
+  }
+
+  .profile-picture-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #f5a623;
+    object-fit: cover;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  @media (max-width: 767px) {
+    .profile-picture-preview {
+      position: static;
+      margin: 0 0 1rem;
+      display: block;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .profile-picture-preview {
+      position: absolute;
+      top: -110px;
+      right: 0;
+    }
+    .col-md-4 {
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+    }
+    .form-control, .form-select {
+      padding: 0.6rem 0.85rem;
+      height: 38px;
+    }
+  }
+
+  .login-link {
+    color: #f39c12;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .login-link:hover {
+    color: #e67e22;
+    text-decoration: underline;
+  }
+
+  .password-container {
+    position: relative;
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+  }
+
+  .toggle-password:hover i {
+    color: #f39c12;
+  }
+
+  .form-section-heading {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color:rgba(40, 16, 3, 0.62);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 12px;
+    animation: slideInLeft 0.5s ease-out;
+  }
+
+  .form-section-heading::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    background-color: #f5a623;
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .alert {
+    border-radius: 0.6rem;
+    font-size: 0.9rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: opacity 0.5s ease;
+  }
+
+  .alert-success {
+    background-color: #e6f4ea;
+    border-color: #c3e6cb;
+    color: #155724;
+  }
+
+  .alert-danger {
+    background-color: #fdeded;
+    border-color: #f5c6cb;
+    color: #721c24;
+  }
+
+  .alert .btn-close {
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+  }
+
+  @media (max-width: 767px) {
+    .player-registration {
+      padding: 1.5rem 0;
+    }
+    .card {
+      border-radius: 0.8rem;
+      padding: 1.2rem;
+    }
+    h2 {
+      font-size: 1.7rem;
+    }
+    h4 {
+      font-size: 1.1rem;
+    }
+    .form-control, .form-select {
+      font-size: 0.9rem;
+      padding: 0.5rem 0.75rem;
+      height: 36px;
+    }
+    .btn-submit {
+      font-size: 0.9rem;
+      padding: 0.5rem 1.2rem;
+    }
+    .col-md-4 {
+      margin-bottom: 1rem;
+    }
+  }
+
+  /* Ensure no horizontal scroll */
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .container-fluid {
+    max-width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+</style>
+
+<div class="container-fluid player-registration py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-4 p-md-5">
+          <!-- Heading -->
+          <div class="text-center mb-4">
+            <h2>GIGCCL Sports Portal</h2>
+            <h4 class="text-secondary">Player Registration Form</h4>
+          </div>
+
+          <!-- Messages -->
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show animate-slide-in" role="alert" data-auto-dismiss>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <!-- Non-field Errors -->
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissible fade show animate-slide-in" role="alert" data-auto-dismiss>
+              {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endif %}
+
+          <!-- Form Start -->
+          <form method="POST" action="{% url 'Sports_Users:player_register' %}" enctype="multipart/form-data" id="registration-form">
+            {% csrf_token %}
+            <div class="row g-3">
+              <!-- Personal Details -->
+              <h5 class="form-section-heading">Personal Details</h5>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.first_name.id_for_label }}"><span class="text-danger">*</span> {{ form.first_name.label }}</label>
+                {{ form.first_name }}
+                <div class="error-message text-danger small" id="error-first_name"></div>
+                {% if form.first_name.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.first_name.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+                {{ form.last_name }}
+                <div class="error-message text-danger small" id="error-last_name"></div>
+                {% if form.last_name.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.last_name.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 profile-picture-container">
+                <img id="profile-picture-preview" class="profile-picture-preview" src="#" alt="Profile Picture Preview" style="display: none;">
+                <label for="{{ form.profile_picture.id_for_label }}">{{ form.profile_picture.label }}</label>
+                {{ form.profile_picture }}
+                <div class="error-message text-danger small" id="error-profile_picture"></div>
+                {% if form.profile_picture.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.profile_picture.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.cnic.id_for_label }}"><span class="text-danger">*</span> {{ form.cnic.label }}</label>
+                {{ form.cnic }}
+                <div class="error-message text-danger small" id="error-cnic"></div>
+                {% if form.cnic.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.cnic.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.father_name.id_for_label }}"><span class="text-danger">*</span> {{ form.father_name.label }}</label>
+                {{ form.father_name }}
+                <div class="error-message text-danger small" id="error-father_name"></div>
+                {% if form.father_name.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.father_name.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.father_cnic.id_for_label }}"><span class="text-danger">*</span> {{ form.father_cnic.label }}</label>
+                {{ form.father_cnic }}
+                <div class="error-message text-danger small" id="error-father_cnic"></div>
+                {% if form.father_cnic.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.father_cnic.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.dob.id_for_label }}"><span class="text-danger">*</span> {{ form.dob.label }}</label>
+                {{ form.dob }}
+                <div class="error-message text-danger small" id="error-dob"></div>
+                {% if form.dob.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.dob.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.email.id_for_label }}"><span class="text-danger">*</span> {{ form.email.label }}</label>
+                {{ form.email }}
+                <div class="error-message text-danger small" id="error-email"></div>
+                {% if form.email.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.email.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.phone_number.id_for_label }}"><span class="text-danger">*</span> {{ form.phone_number.label }}</label>
+                {{ form.phone_number }}
+                <div class="error-message text-danger small" id="error-phone_number"></div>
+                {% if form.phone_number.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.phone_number.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.whatsapp_number.id_for_label }}"><span class="text-danger">*</span> {{ form.whatsapp_number.label }}</label>
+                {{ form.whatsapp_number }}
+                <div class="error-message text-danger small" id="error-whatsapp_number"></div>
+                {% if form.whatsapp_number.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.whatsapp_number.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.province.id_for_label }}"><span class="text-danger">*</span> {{ form.province.label }}</label>
+                <select id="id_province" name="province" class="form-select" required>
+                  <option value="" selected>Select Province</option>
+                  <option value="Balochistan">Balochistan</option>
+                  <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
+                  <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
+                  <option value="Punjab">Punjab</option>
+                  <option value="Sindh">Sindh</option>
+                </select>
+                <div class="error-message text-danger small" id="error-province"></div>
+                {% if form.province.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.province.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.city.id_for_label }}"><span class="text-danger">*</span> {{ form.city.label }}</label>
+                <select id="id_city" name="city" class="form-select" required>
+                  <option value="" selected>Select City</option>
+                </select>
+                <div class="error-message text-danger small" id="error-city"></div>
+                {% if form.city.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.city.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-12">
+                <label for="{{ form.address.id_for_label }}"><span class="text-danger">*</span> {{ form.address.label }}</label>
+                {{ form.address }}
+                <div class="error-message text-danger small" id="error-address"></div>
+                {% if form.address.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.address.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Sports Details -->
+              <h5 class="form-section-heading mt-4">Sports Details</h5>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.sport.id_for_label }}"><span class="text-danger">*</span> {{ form.sport.label }}</label>
+                {{ form.sport }}
+                <div class="error-message text-danger small" id="error-sport"></div>
+                {% if form.sport.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.sport.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.height.id_for_label }}"><span class="text-danger">*</span> {{ form.height.label }}</label>
+                {{ form.height }}
+                <div class="error-message text-danger small" id="error-height"></div>
+                {% if form.height.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.height.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.weight.id_for_label }}"><span class="text-danger">*</span> {{ form.weight.label }}</label>
+                {{ form.weight }}
+                <div class="error-message text-danger small" id="error-weight"></div>
+                {% if form.weight.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.weight.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.college_roll_no.id_for_label }}"><span class="text-danger">*</span> {{ form.college_roll_no.label }}</label>
+                {{ form.college_roll_no }}
+                <div class="error-message text-danger small" id="error-college_roll_no"></div>
+                {% if form.college_roll_no.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.college_roll_no.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Medical Details -->
+              <h5 class="form-section-heading mt-4">Medical Details</h5>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.blood_group.id_for_label }}"><span class="text-danger">*</span> {{ form.blood_group.label }}</label>
+                {{ form.blood_group }}
+                <div class="error-message text-danger small" id="error-blood_group"></div>
+                {% if form.blood_group.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.blood_group.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.disability.id_for_label }}">{{ form.disability.label }}</label>
+                {{ form.disability }}
+                <div class="error-message text-danger small" id="error-disability"></div>
+                {% if form.disability.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.disability.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-12" id="disability-detail-container" style="display: none;">
+                <label for="{{ form.disability_detail.id_for_label }}">{{ form.disability_detail.label }}</label>
+                {{ form.disability_detail }}
+                <div class="error-message text-danger small" id="error-disability_detail"></div>
+                {% if form.disability_detail.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.disability_detail.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Password Details -->
+              <h5 class="form-section-heading mt-4">Password Details</h5>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.password1.id_for_label }}"><span class="text-danger">*</span> {{ form.password1.label }}</label>
+                <div class="password-container">
+                  {{ form.password1 }}
+                  <span class="toggle-password" id="toggle-password">
+                    <i class="fas fa-eye"></i>
+                  </span>
+                </div>
+                <div class="error-message text-danger small" id="error-password1"></div>
+                {% if form.password1.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.password1.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-md-4 position-relative">
+                <label for="{{ form.confirm_password.id_for_label }}"><span class="text-danger">*</span> {{ form.confirm_password.label }}</label>
+                <div class="password-container">
+                  {{ form.confirm_password }}
+                  <span class="toggle-password" id="toggle-confirm-password">
+                    <i class="fas fa-eye"></i>
+                  </span>
+                </div>
+                <div class="error-message text-danger small" id="error-confirm_password"></div>
+                {% if form.confirm_password.errors %}
+                  <div class="text-danger small">
+                    {% for error in form.confirm_password.errors %}
+                      {{ error }}<br>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-end">
+              <button type="submit" class="btn btn-submit">Submit</button>
+            </div>
+            <div class="text-center mt-3">
+              <p>Already have an account? <a href="{% url 'Sports_Users:player_login' %}" class="login-link">Login here</a></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Flatpickr CDN -->
+<link href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('registration-form');
+    const provinceSelect = document.getElementById('id_province');
+    const citySelect = document.getElementById('id_city');
+    const disabilitySelect = document.getElementById('{{ form.disability.id_for_label }}');
+    const disabilityDetailContainer = document.getElementById('disability-detail-container');
+    const fatherCInput = document.getElementById('{{ form.father_cnic.id_for_label }}');
+    const cnicInput = document.getElementById('{{ form.cnic.id_for_label }}');
+    const whatsappInput = document.getElementById('{{ form.whatsapp_number.id_for_label }}');
+    const phoneInput = document.getElementById('{{ form.phone_number.id_for_label }}');
+    const heightInput = document.getElementById('{{ form.height.id_for_label }}');
+    const weightInput = document.getElementById('{{ form.weight.id_for_label }}');
+    const collegeRollNoInput = document.getElementById('{{ form.college_roll_no.id_for_label }}');
+    const dobInput = document.getElementById('{{ form.dob.id_for_label }}');
+    const profilePictureInput = document.getElementById('{{ form.profile_picture.id_for_label }}');
+    const profilePicturePreview = document.getElementById('profile-picture-preview');
+    const passwordInput = document.getElementById('{{ form.password1.id_for_label }}');
+    const confirmPasswordInput = document.getElementById('{{ form.confirm_password.id_for_label }}');
+    const togglePassword = document.getElementById('toggle-password');
+    const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+
+    // Initialize Flatpickr for Date of Birth
+    flatpickr('#{{ form.dob.id_for_label }}', {
+      dateFormat: 'Y-m-d',
+      maxDate: 'today',
+      allowInput: true,
+      altInput: true,
+      altFormat: 'F j, Y'
+    });
+
+    // Province-City Mapping
+    const citiesByProvince = {
+      'Balochistan': [
+        'Awaran', 'Barkhan', 'Chagai', 'Dera Bugti', 'Gwadar', 'Harnai', 'Jafarabad', 'Jhal Magsi', 'Kachhi', 'Kalat',
+        'Kech', 'Kharan', 'Khuzdar', 'Killa Abdullah', 'Killa Saifullah', 'Kohlu', 'Lasbela', 'Lehri', 'Loralai', 'Mastung',
+        'Musakhel', 'Naseerabad', 'Nushki', 'Panjgur', 'Pishin', 'Quetta', 'Sherani', 'Sibi', 'Sohbatpur', 'Washuk', 'Zhob'
+      ],
+      'Gilgit-Baltistan': [
+        'Astore', 'Diamer', 'Ghanche', 'Ghizer', 'Gilgit', 'Hunza', 'Kharmang', 'Nagar', 'Shigar', 'Skardu'
+      ],
+      'Khyber Pakhtunkhwa': [
+        'Abbottabad', 'Bajaur', 'Bannu', 'Battagram', 'Buner', 'Charsadda', 'Chitral Lower', 'Chitral Upper', 'Dera Ismail Khan',
+        'Dir Lower', 'Dir Upper', 'Hangu', 'Haripur', 'Karak', 'Khyber', 'Kohat', 'Kohistan Lower', 'Kohistan Upper', 'Kolai Pallas',
+        'Kurram', 'Lakki Marwat', 'Malakand', 'Mansehra', 'Mardan', 'Mohmand', 'North Waziristan', 'Nowshera', 'Orakzai', 'Peshawar',
+        'Shangla', 'South Waziristan', 'Swabi', 'Swat', 'Tank', 'Torghar'
+      ],
+      'Punjab': [
+        'Attock', 'Bahawalnagar', 'Bahawalpur', 'Bhakkar', 'Chakwal', 'Chiniot', 'Dera Ghazi Khan', 'Faisalabad', 'Gujranwala', 'Gujrat',
+        'Hafizabad', 'Jhang', 'Jhelum', 'Kasur', 'Khanewal', 'Khushab', 'Lahore', 'Layyah', 'Lodhran', 'Mandi Bahauddin', 'Mianwali',
+        'Multan', 'Muzaffargarh', 'Narowal', 'Okara', 'Pakpattan', 'Rahim Yar Khan', 'Rajanpur', 'Rawalpindi', 'Sahiwal', 'Sargodha',
+        'Sheikhupura', 'Sialkot', 'Toba Tek Singh', 'Vehari'
+      ],
+      'Sindh': [
+        'Badin', 'Dadu', 'Ghotki', 'Hyderabad', 'Jacobabad', 'Jamshoro', 'Karachi Central', 'Karachi East', 'Karachi South',
+        'Karachi West', 'Kashmore', 'Khairpur', 'Larkana', 'Matiari', 'Mirpurkhas', 'Naushahro Feroze', 'Qambar Shahdadkot',
+        'Sanghar', 'Shikarpur', 'Sukkur', 'Tando Allahyar', 'Tando Muhammad Khan', 'Tharparkar', 'Thatta', 'Umerkot'
+      ]
+    };
+
+    // Update city options based on province
+    provinceSelect.addEventListener('change', function () {
+      const province = this.value;
+      citySelect.innerHTML = '<option value="">Select City</option>';
+      if (province && citiesByProvince[province]) {
+        citiesByProvince[province].forEach(city => {
+          const option = document.createElement('option');
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+        });
+      }
+    });
+
+    // Show/hide disability detail
+    disabilitySelect.addEventListener('change', function () {
+      if (this.value === 'Yes') {
+        disabilityDetailContainer.style.display = 'block';
+      } else {
+        disabilityDetailContainer.style.display = 'none';
+      }
+    });
+
+    // Preview profile picture
+    profilePictureInput.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          profilePicturePreview.src = e.target.result;
+          profilePicturePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        profilePicturePreview.style.display = 'none';
+      }
+    });
+
+    // Toggle password visibility
+    togglePassword.addEventListener('click', function () {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      const icon = this.querySelector('i');
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+    });
+
+    toggleConfirmPassword.addEventListener('click', function () {
+      const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      confirmPasswordInput.setAttribute('type', type);
+      const icon = this.querySelector('i');
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+    });
+
+    // Format CNIC field
+    function formatCNIC(input) {
+      let value = input.value.replace(/[^0-9]/g, '');
+      if (value.length > 5) {
+        value = value.substring(0, 5) + '-' + value.substring(5);
+      }
+      if (value.length > 13) {
+        value = value.substring(0, 13) + '-' + value.substring(13, 14);
+      }
+      input.value = value;
+    }
+
+    cnicInput.addEventListener('input', function () {
+      formatCNIC(this);
+    });
+    fatherCInput.addEventListener('input', function () {
+      formatCNIC(this);
+    });
+
+    // WhatsApp number formatting
+    whatsappInput.addEventListener('focus', function () {
+      if (!this.value) {
+        this.value = '+92 ';
+      }
+    });
+
+    whatsappInput.addEventListener('input', function () {
+      let value = this.value.replace(/[^0-9+]/g, '');
+      if (!value.startsWith('+92')) {
+        value = '+92 ';
+      } else if (value.length < 4) {
+        value = '+92 ';
+      } else {
+        let numberPart = value.substring(3).replace(/\s/g, '');
+        if (numberPart.length > 0 && !numberPart.startsWith('3')) {
+          numberPart = '';
+        }
+        if (numberPart.length > 10) {
+          numberPart = numberPart.substring(0, 10);
+        }
+        value = '+92 ' + numberPart;
+      }
+      this.value = value;
+    });
+
+    whatsappInput.addEventListener('blur', function () {
+      if (this.value === '+92 ') {
+        this.value = '';
+      }
+    });
+
+    whatsappInput.addEventListener('keydown', function (e) {
+      if (this.selectionStart < 4 && (e.key !== 'Backspace' && e.key !== 'Delete')) {
+        e.preventDefault();
+      }
+    });
+
+    // Form validation
+    form.addEventListener('submit', function (e) {
+      let isValid = true;
+      const errorElements = document.getElementsByClassName('error-message');
+
+      for (let element of errorElements) {
+        element.textContent = '';
+      }
+
+      if (!form.first_name.value) {
+        document.getElementById('error-first_name').textContent = 'First Name is required.';
+        isValid = false;
+      }
+
+      if (!form.email.value.includes('@')) {
+        document.getElementById('error-email').textContent = 'Please enter a valid email address.';
+        isValid = false;
+      }
+
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        document.getElementById('error-confirm_password').textContent = 'Passwords do not match.';
+        isValid = false;
+      }
+
+      if (passwordInput.value.length < 6) {
+        document.getElementById('error-password1').textContent = 'Password must be at least 6 characters.';
+        isValid = false;
+      }
+
+      const cnicPattern = /^\d{5}-\d{7}-\d$/;
+      if (cnicInput.value && !cnicPattern.test(cnicInput.value)) {
+        document.getElementById('error-cnic').textContent = 'CNIC must be in the format 12345-1234567-1.';
+        isValid = false;
+      }
+      if (!cnicInput.value) {
+        document.getElementById('error-cnic').textContent = 'CNIC is required.';
+        isValid = false;
+      }
+
+      if (fatherCInput.value && !cnicPattern.test(fatherCInput.value)) {
+        document.getElementById('error-father_cnic').textContent = 'Father CNIC must be in the format 12345-1234567-1.';
+        isValid = false;
+      }
+      if (!fatherCInput.value) {
+        document.getElementById('error-father_cnic').textContent = 'Father CNIC is required.';
+        isValid = false;
+      }
+
+      const whatsappPattern = /^\+923\d{9}$/;
+      if (!whatsappInput.value) {
+        document.getElementById('error-whatsapp_number').textContent = 'WhatsApp number is required.';
+        isValid = false;
+      } else {
+        const cleanedWhatsapp = whatsappInput.value.replace(/\s/g, '');
+        if (!whatsappPattern.test(cleanedWhatsapp)) {
+          document.getElementById('error-whatsapp_number').textContent = 'WhatsApp number must be in the format +92 3000000000.';
+          isValid = false;
+        }
+      }
+
+      const phonePattern = /^\d{11}$/;
+      if (phoneInput.value && !phonePattern.test(phoneInput.value.replace(/[^0-9]/g, ''))) {
+        document.getElementById('error-phone_number').textContent = 'Phone number must be 11 digits.';
+        isValid = false;
+      }
+      if (!phoneInput.value) {
+        document.getElementById('error-phone_number').textContent = 'Phone number is required.';
+        isValid = false;
+      }
+
+      const dobPattern = /^\d{4}-\d{2}-\d{2}$/;
+      if (dobInput.value && !dobPattern.test(dobInput.value)) {
+        document.getElementById('error-dob').textContent = 'Date of Birth must be in the format YYYY-MM-DD.';
+        isValid = false;
+      }
+      if (!dobInput.value) {
+        document.getElementById('error-dob').textContent = 'Date of Birth is required.';
+        isValid = false;
+      }
+
+      if (!provinceSelect.value) {
+        document.getElementById('error-province').textContent = 'Province is required.';
+        isValid = false;
+      }
+
+      if (!citySelect.value) {
+        document.getElementById('error-city').textContent = 'City is required.';
+        isValid = false;
+      }
+
+      if (!form.address.value) {
+        document.getElementById('error-address').textContent = 'Address is required.';
+        isValid = false;
+      }
+
+      if (!form.sport.value) {
+        document.getElementById('error-sport').textContent = 'Sport is required.';
+        isValid = false;
+      }
+
+      if (!heightInput.value) {
+        document.getElementById('error-height').textContent = 'Height is required.';
+        isValid = false;
+      }
+
+      if (!weightInput.value) {
+        document.getElementById('error-weight').textContent = 'Weight is required.';
+        isValid = false;
+      }
+
+      if (!collegeRollNoInput.value) {
+        document.getElementById('error-college_roll_no').textContent = 'College Roll No is required.';
+        isValid = false;
+      }
+
+      if (!form.blood_group.value) {
+        document.getElementById('error-blood_group').textContent = 'Blood group is required.';
+        isValid = false;
+      }
+
+      if (disabilitySelect.value === 'Yes' && !form.disability_detail.value) {
+        document.getElementById('error-disability_detail').textContent = 'Disability detail is required if disability is selected as Yes.';
+        isValid = false;
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+
+    // Set maxlength attributes
+    form.first_name.setAttribute('maxlength', '50');
+    form.last_name.setAttribute('maxlength', '50');
+    cnicInput.setAttribute('maxlength', '15');
+    fatherCInput.setAttribute('maxlength', '15');
+    whatsappInput.setAttribute('maxlength', '14');
+    phoneInput.setAttribute('maxlength', '11');
+    form.address.setAttribute('maxlength', '100');
+    form.disability_detail.setAttribute('maxlength', '200');
+    collegeRollNoInput.setAttribute('maxlength', '15');
+
+    // Auto-dismiss alerts
+    const alerts = document.querySelectorAll('[data-auto-dismiss]');
+    alerts.forEach(alert => {
+      setTimeout(() => {
+        alert.classList.add('fade-out');
+        setTimeout(() => {
+          alert.style.display = 'none';
+          alert.classList.remove('show', 'fade-out');
+        }, 500);
+      }, 5000);
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Certificate</title>
+  <style>
+    body {
+      background: #555;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 10px;
+    }
+
+    .card {
+      position: relative;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 1000px;
+      height: auto;
+      max-height: 95vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scroll-container {
+      flex: 1;
+      overflow: hidden; /* default: no scroll */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .scroll-container img {
+      max-width: 100%;
+      max-height: 85vh;  /* fit within screen */
+      border-radius: 10px;
+      margin-top: 10px;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.3);
+      object-fit: contain;
+    }
+
+    /* Enable scroll if content exceeds card height */
+    .scroll-container.scrollable {
+      overflow-y: auto;
+      align-items: flex-start;
+    }
+
+    a.download-btn {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      padding: 10px 15px;
+      background: #6a0dad;
+      color: white;
+      border-radius: 8px;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+    a.download-btn:hover {
+      background: #520a8a;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .close-btn:hover {
+      color: red;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .card {
+        padding: 15px;
+        border-radius: 10px;
+      }
+      .scroll-container img {
+        max-height: 70vh;
+      }
+      a.download-btn {
+        width: 100%;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 18px;
+      }
+      .close-btn {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- Close Button -->
+    <a href="{% url 'Sports_Users:player_dashboard' %}" class="close-btn">&times;</a>
+
+    <h2>Certificate</h2>
+
+    <div id="scroll-container" class="scroll-container">
+      {% if cert_image_url %}
+        <img id="certificate-img" src="{{ cert_image_url }}" alt="Certificate Preview">
+      {% else %}
+        <p>No certificate available.</p>
+      {% endif %}
+    </div>
+
+    {% if cert_file_url %}
+      <a href="{{ cert_file_url }}" download class="download-btn">⬇ Download Certificate</a>
+    {% endif %}
+  </div>
+
+  <script>
+    // Check if image exceeds container height, then enable scroll
+    window.addEventListener("load", function() {
+      const container = document.getElementById("scroll-container");
+      const img = document.getElementById("certificate-img");
+
+      if (img && img.scrollHeight > container.clientHeight) {
+        container.classList.add("scrollable");
+      }
+    });
+  </script>
+</body>
+</html>

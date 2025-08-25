@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developers Profile</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        /* Background Styling */
+        body {
+            background-color: #1e1e2f;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        /* Modal Dialog Centering */
+        .modal-dialog {
+            margin: 0 auto;
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            background: rgba(44, 47, 60, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            border: 2px solid #7289da;
+            max-width: 900px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .modal-header {
+            border-bottom: 2px solid #7289da;
+            text-align: center;
+            padding-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ffffff;
+            margin: 0 auto;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        /* Profile Container */
+        .profile-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: stretch;
+            width: 100%;
+            gap: 20px;
+            padding: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            width: fit-content;
+            min-width: 250px;
+            min-height: 360px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 5px 15px rgba(114, 137, 218, 0.5);
+        }
+
+        /* Profile Image */
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #7289da;
+            transition: transform 0.3s ease-in-out;
+            margin: 0 auto;
+        }
+
+        .profile-card:hover .profile-img {
+            transform: scale(1.1);
+        }
+
+        /* Profile Name & Status */
+        .profile-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0 6px;
+            color: #ffffff;
+        }
+
+        .profile-status {
+            font-size: 16px;
+            color: #b9bbbe;
+            margin: 6px 0;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .linkedin-link {
+            color: #7289da;
+            text-decoration: none;
+        }
+
+        .linkedin-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Layout */
+        @media (min-width: 768px) {
+            .modal-content {
+                min-width: 700px;
+            }
+
+            .profile-container {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-around;
+                gap: 20px;
+            }
+
+            .profile-card {
+                flex: 1;
+                min-width: 250px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .profile-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .profile-card {
+                width: 100%;
+                max-width: 350px;
+                min-width: 0;
+            }
+
+            .modal-content {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .modal-content {
+                padding: 10px;
+            }
+
+            .modal-title {
+                font-size: 22px;
+            }
+
+            .profile-img {
+                width: 80px;
+                height: 80px;
+            }
+
+            .profile-name {
+                font-size: 18px;
+            }
+
+            .profile-status {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Developers Profile Modal -->
+    <div class="modal fade show" id="devProfileModal" tabindex="-1" aria-modal="true" role="dialog" style="display: block;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Developers Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModal"></button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <div class="profile-container">
+                        <!-- Developer 1 -->
+                        <div class="profile-card">
+                            <img src="{% static 'images/Dev_Pics/dev1.jpg' %}" alt="Moazzam Mushtaq" class="profile-img">
+                            <h5 class="profile-name">Moazzam Mushtaq</h5>
+                            <p class="profile-status">Back-End Developer</p>
+                            <p class="profile-status">
+                                <strong>LinkedIn:</strong> 
+                                <a href="https://www.linkedin.com/in/moazzammushtaq65" class="linkedin-link">MoazzamMushtaq</a>
+                            </p>
+                            <p class="profile-status">
+                                <strong>Email:</strong> 
+                                <a href="mailto:maharmoazzam65@gmail.com">maharmoazzam65@gmail.com</a>
+                            </p>
+                        </div>
+
+                        <!-- Developer 2 -->
+                        <div class="profile-card">
+                            <img src="{% static 'images/Dev_Pics/dev2.jpg' %}" alt="Shahid Shahzad" class="profile-img">
+                            <h5 class="profile-name">Shahid Shahzad</h5>
+                            <p class="profile-status">Back-End Developer</p>
+                            <p class="profile-status">
+                                <strong>LinkedIn:</strong> 
+                                <a href="https://www.linkedin.com/in/mian-shahid-59b9202b0?" class="linkedin-link">ShahidShahzad</a>
+                            </p>
+                            <p class="profile-status">
+                                <strong>Email:</strong> 
+                                <a href="mailto:Mianshahid0735@gmail.com">mianshahid0735@gmail.com</a>
+                            </p>
+                        </div>
+
+                        <!-- Developer 3 -->
+                        <div class="profile-card">
+                            <img src="{% static 'images/Dev_Pics/dev3.png' %}" alt="Muhammad Arham" class="profile-img">
+                            <h5 class="profile-name">Muhammad Arham</h5>
+                            <p class="profile-status">Front-End Developer</p>
+                            <p class="profile-status">
+                                <strong>LinkedIn:</strong> 
+                                <a href="https://www.linkedin.com/in/muhammad-arham-b12683331?" class="linkedin-link">MArham</a>
+                            </p>
+                            <p class="profile-status">
+                                <strong>Email:</strong> 
+                                <a href="mailto:armiibutt@gmail.com">armiibutt@gmail.com</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript to Redirect on Close -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Store the previous page URL when the modal is opened
+            sessionStorage.setItem("previousPage", document.referrer || "/");
+
+            // Redirect when modal is closed
+            document.getElementById("closeModal").addEventListener("click", function () {
+                let previousPage = sessionStorage.getItem("previousPage");
+                if (previousPage) {
+                    window.location.href = previousPage;
+                } else {
+                    window.location.href = "/"; // Fallback to homepage
+                }
+            });
+        });
+    </script>
+</body>
+</html>

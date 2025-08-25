@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications - GIGCCL Sports Portal{% endblock %}
+
+{% block content %}
+<!-- AOS Animation CSS -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+  body {
+    background-color: #FFE2CD;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .container_notifications {
+    background-color: #FFE2CD;
+    padding: 25px 15px 60px;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .notification-header {
+    background: linear-gradient(90deg, #964734, #b85b4a);
+    color: white;
+    font-size: 25px;
+    font-weight: 400;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .notification-header h2 {
+    margin: 0;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+  }
+
+  .badge {
+    background-color: #FFC107;
+    color: #964734;
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    margin-left: 10px;
+    font-weight: 600;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .header-actions button {
+    background-color: #FFE2CD;
+    color: #964734;
+    border: 2px solid #964734;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .header-actions button:hover {
+    background-color: #FFC107;
+    color: #964734;
+  }
+
+  .notifications-list {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .notification {
+    background-color: white;
+    padding: 16px 22px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border-left: 5px solid #964734;
+    color: #7A542E;
+    transition: transform 0.3s ease;
+  }
+
+  .notification:hover {
+    transform: translateY(-4px);
+  }
+
+  .notification-title {
+    font-weight: 600;
+    font-size: 17px;
+    margin-bottom: 6px;
+  }
+
+  .notification-message {
+    font-size: 14.5px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .notification-time {
+    font-size: 12.5px;
+    color: #964734;
+    opacity: 0.75;
+  }
+
+  .pagination-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .pagination .page-link {
+    color: #964734;
+    border-color: #964734;
+    border-radius: 50px;
+    margin: 0 4px;
+    padding: 6px 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .pagination .page-item.active .page-link {
+    background-color: #964734;
+    border-color: #964734;
+    color: white;
+  }
+
+  .pagination .page-link:hover {
+    background-color: #FFC107;
+    border-color: #964734;
+    color: #964734;
+  }
+
+  @media (max-width: 768px) {
+    .notification-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .header-actions {
+      justify-content: flex-start;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header-actions button {
+      margin-top: 6px;
+    }
+  }
+</style>
+
+<div class="container_notifications container">
+  <!-- Updated Page Header (Unified with Gallery Page Style) -->
+  <div class="notification-header">
+    <h2><span class="badge" id="notification-count">{{ page_obj.object_list|length }}</span> General Notifications 🔔 </h2>
+    <div class="header-actions">
+      <button onclick="markAsRead()">Mark as Read</button>
+      <button onclick="clearNotification()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Notification Cards -->
+  <div class="notifications-list" id="notification-container">
+    {% for notification in page_obj %}
+      <div class="notification" id="notification-{{ notification.id }}" data-aos="fade-up" data-aos-duration="1000">
+        <div class="notification-title">{{ notification.title }}</div>
+        <div class="notification-message">{{ notification.message }}</div>
+        <div class="notification-time">{{ notification.created_at|date:"F d, Y, h:i A" }}</div>
+      </div>
+    {% empty %}
+      <p>No general notifications to show.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+    <div class="pagination-container">
+      <nav aria-label="Notifications Page Navigation">
+        <ul class="pagination">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+          {% endif %}
+          {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+          {% endfor %}
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  {% endif %}
+</div>
+
+<!-- AOS Animation JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+
+  function markAsRead() {
+    document.querySelectorAll('.notification').forEach(n => n.style.opacity = '0.6');
+    document.getElementById("notification-count").textContent = "0";
+  }
+
+  function clearNotification() {
+    document.getElementById("notification-container").innerHTML = '';
+    document.getElementById("notification-count").textContent = "0";
+  }
+</script>
+{% endblock content %}

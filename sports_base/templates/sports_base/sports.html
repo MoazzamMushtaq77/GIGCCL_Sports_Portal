@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GIGCCL Sports Portal - Sports{% endblock %}
+
+{% block content %}
+<!-- AOS Animation CSS -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<style>
+  :root {
+    --primary-color: #964734;
+    --bg-light: #FFE2CD;
+    --card-text: #7A542E;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--bg-light);
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex-grow: 1;
+  }
+
+  .sports-container {
+    background-color: var(--bg-light);
+    padding: 30px 15px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+  }
+
+  .page-header {
+    background: linear-gradient(90deg, #964734, #b85b4a);
+    color: #fff;
+    padding: 15px;
+    font-size: 25px;
+    font-weight: 400;
+    text-align: center;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+  }
+
+  .sports-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  .sport-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    height: auto;
+    width: 100%;
+    max-width: 360px;
+    flex: 1 1 calc(33.33% - 20px);
+  }
+
+  .sport-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .sport-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+
+  .sport-card h3 {
+    margin: 12px 0 16px;
+    color: var(--card-text);
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 0 8px;
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+  }
+
+  .pagination {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .pagination .page-link {
+    color: var(--primary-color);
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .pagination .page-link:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .page-indicator {
+    padding: 6px 16px;
+    font-weight: 500;
+    color: var(--card-text);
+    background-color: transparent;
+    border: none;
+    cursor: default;
+    border-radius: 50px;
+  }
+
+  .pagination .disabled .page-link {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 991.98px) {
+    .sport-card {
+      flex: 1 1 calc(33.33% - 20px);
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .sport-card {
+      flex: 1 1 calc(50% - 20px);
+    }
+
+    .sport-card img {
+      height: 160px;
+    }
+
+    .sport-card h3 {
+      font-size: 1.05rem;
+    }
+
+    .pagination .page-link {
+      padding: 6px 12px;
+      font-size: 0.95rem;
+    }
+
+    .page-indicator {
+      font-size: 0.95rem;
+    }
+  }
+</style>
+
+<div class="container py-4">
+  <div class="page-header">Available Sports 🎯</div>
+
+  <div class="sports-list">
+    {% for sport in page_obj %}
+    <div class="sport-card" data-aos="fade-up" data-aos-duration="1000">
+      <img src="{{ sport.image.url }}" alt="{{ sport.name }}" loading="lazy">
+      <h3>{{ sport.name }}</h3>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="pagination-container">
+    <nav aria-label="Sports Page Navigation">
+      <ul class="pagination">
+        <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+          <a class="page-link" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}&screen={{ request.GET.screen|default:'large' }}{% else %}#{% endif %}">Previous</a>
+        </li>
+        <li class="page-indicator">
+          Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </li>
+        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+          <a class="page-link" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}&screen={{ request.GET.screen|default:'large' }}{% else %}#{% endif %}">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+</div>
+
+<!-- AOS JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
+{% endblock %}

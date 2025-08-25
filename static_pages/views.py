@@ -1,35 +1,54 @@
-from django.shortcuts import render
-from .models import News, Team
-from .models import Sports, Match
+from django.shortcuts import render, get_object_or_404
+from .models import Achievements, HomePic, HODMessage
+from sports_base.models import Sport, Team, MatchResult
+from django.contrib.auth.decorators import login_required
 
 def scoreboard(request):
-    sports = Sports.objects.all()
+    sports = Sport.objects.all()
     selected_sport = request.GET.get('sport')
     if selected_sport:
-        matches = Match.objects.filter(sport__id=selected_sport).order_by('-date')
+        matches = MatchResult.objects.filter(sport__id=selected_sport).order_by('-date')
     else:
-        matches = Match.objects.all().order_by('-date')
+        matches = MatchResult.objects.all().order_by('-date')
 
     context = {
         'sports': sports,
         'matches': matches,
         'selected_sport': selected_sport,
     }
-    return render(request, 'scoreboard.html', context)
+    return render(request, 'static_pages/scoreboard.html', context)
 
-
-
+@login_required(login_url='Sports_Users:player_login')
 def teams(request):
-    teams = Team.objects.prefetch_related('players', 'achievement_set').select_related('coach')
-    return render(request, 'teams.html', {'teams': teams})
+    sports = Sport.objects.all()
+    selected_sport = request.GET.get('sport')
+    
+    if selected_sport:
+        teams = Team.objects.filter(sport__id=selected_sport).prefetch_related('players', 'achievements').select_related('coach', 'sport')
+    else:
+        teams = Team.objects.prefetch_related('players', 'achievements').select_related('coach', 'sport')
+    
+    context = {
+        'teams': teams,
+        'sports': sports,
+        'selected_sport': selected_sport,
+    }
+    return render(request, 'static_pages/teams.html', context)
 
-
-
-# View for Homepage
 def home(request):
-    latest_news = News.objects.order_by('-date')[:4]  # Get latest 6 news items
-    return render(request, "base.html", {"latest_news": latest_news})
+    home_pic = HomePic.objects.all()
+    hod_message = HODMessage.objects.first() if HODMessage.objects.exists() else None
+    return render(request, "static_pages/home.html", {
+        "home_pic": home_pic,
+        "hod_message": hod_message
+    })
 
-# View for About Us page
 def aboutus(request):
-    return render(request, "aboutus.html")
+    return render(request, "static_pages/aboutus.html")
+
+def achievements(request):
+    achievements = Achievements.objects.select_related('team').order_by('-date')
+    return render(request, 'achievements.html', {'achievements': achievements})
+
+def dev_profile(request):
+    return render(request, 'static_pages/dev_profile.html')

@@ -1,0 +1,482 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GIGCCL Sports Portal - Home{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-color: #964734;
+        --primary-light: rgba(150, 71, 52, 0.1);
+        --background-color: #FFE2CD;
+        --text-color: #4A3B34;
+        --secondary-color: #3A1C07;
+        --secondary-hover: #5C2E0A;
+    }
+
+    /* Hero Slider Section */
+    .hero {
+        height: 90vh;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .hero-slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hero-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0;
+        transition: opacity 1.2s ease-in-out;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hero-slide.active {
+        opacity: 1;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 30px;
+        max-width: 800px;
+    }
+
+    .hero-content h1 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .hero-content p {
+        font-family: 'Roboto', sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        line-height: 1.6;
+        animation: fadeInUp 1s ease-out 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .hero-content .register-btn {
+        background: var(--secondary-color);
+        border: none;
+        padding: 14px 30px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        cursor: pointer;
+        border-radius: 50px;
+        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeInUp 1.2s ease-out 0.4s;
+        animation-fill-mode: both;
+    }
+
+    .hero-content .register-btn:hover {
+        background: var(--secondary-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Principal Section */
+    .principal-section {
+        background-color: white;
+        border-radius: 25px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 40px 0;
+        margin: 30px 0 20px;
+        min-height: 300px;
+    }
+
+    .principal-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 15px;
+        height: 100%;
+    }
+
+    .principal-image {
+        width: 220px;
+        height: 220px;
+        object-fit: cover;
+        border: 6px solid var(--primary-color);
+        border-radius: 50%;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin: 0 60px 30px 0px;
+    }
+
+    .principal-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .principal-section p {
+        font-family: 'Roboto', sans-serif;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--text-color);
+        margin: 5px 0;
+    }
+
+    .principal-section .text-danger {
+        color: var(--primary-color);
+    }
+
+    /* Section Headings */
+    .section-title {
+        font-family: 'Poppins', sans-serif;
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 2.2rem;
+        text-align: center;
+        margin: 0 0 10px;
+    }
+
+    .section-title::after {
+        display: none;
+    }
+
+    /* Feature Cards */
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 0;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-card .card-body {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .feature-card i {
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+
+    .feature-card:hover i {
+        color: var(--secondary-color);
+    }
+
+    .feature-card .card-title {
+        font-family: 'Poppins', sans-serif;
+        color: var(--text-color);
+        font-weight: 600;
+        font-size: 1.3rem;
+    }
+
+    .feature-card .card-text {
+        font-family: 'Roboto', sans-serif;
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    .feature-card .feature-btn {
+        background: var(--primary-color);
+        border: none;
+        padding: 10px 20px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+        border-radius: 25px;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .feature-card .feature-btn:hover {
+        background: var(--secondary-hover);
+        transform: translateY(-2px);
+    }
+
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .hero {
+            height: 80vh;
+        }
+        .hero-content h1 {
+            font-size: 2.5rem;
+        }
+        .hero-content p {
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+        .section-title {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .hero {
+            height: 70vh;
+        }
+        .hero-content h1 {
+            font-size: 2.2rem;
+        }
+        .hero-content p {
+            font-size: 1rem;
+            max-width: 500px;
+        }
+        .hero-content .register-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+        }
+        .principal-image {
+            width: 180px;
+            height: 180px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            height: 60vh;
+        }
+        .hero-content h1 {
+            font-size: 1.8rem;
+        }
+        .hero-content p {
+            font-size: 0.9rem;
+            max-width: 400px;
+        }
+        .hero-content .register-btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+        .principal-image {
+            width: 160px;
+            height: 160px;
+            margin: 0 20px 10px;
+        }
+        .principal-content {
+            flex-direction: column;
+            text-align: left;
+        }
+        .principal-section p {
+            margin: 5px 0;
+        }
+        .section-title {
+            font-size: 1.8rem;
+        }
+        .feature-card .card-body, .news-card .card-body {
+            padding: 20px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero {
+            height: 50vh;
+        }
+        .hero-content h1 {
+            font-size: 1.5rem;
+        }
+        .hero-content p {
+            font-size: 0.8rem;
+            max-width: 300px;
+        }
+        .hero-content .register-btn {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+        }
+        .principal-image {
+            width: 140px;
+            height: 140px;
+            margin: 0 20px 5px;
+        }
+        .principal-content {
+            flex-direction: column;
+            text-align: left;
+        }
+        .principal-section {
+            padding: 20px 0;
+        }
+        .section-title {
+            font-size: 1.5rem;
+        }
+        .feature-card .feature-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<!-- Hero Section with Slider -->
+<section class="hero">
+    <div class="hero-slider">
+        {% for slide in home_pic %}
+        <div class="hero-slide" style="background-image: url('{{ slide.image.url }}');"></div>
+        {% empty %}
+        <div class="hero-slide" style="background-image: url('{% static 'media/ph 1.jpeg' %}');"></div>
+        {% endfor %}
+    </div>
+    <div class="hero-content">
+        <h1>Welcome to GIGCCL Sports Portal</h1>
+        <p>Sports bring people together, teaching discipline, passion, and teamwork while inspiring greatness through fair competition.</p>
+        {% if user.is_authenticated and user.is_player %}
+            <button class="register-btn" onclick="window.location.href='{% url 'Sports_Users:player_dashboard' %}'">Go to Dashboard</button>
+        {% else %}
+            <button class="register-btn" onclick="window.location.href='{% url 'Sports_Users:player_register' %}'">Register Now</button>
+        {% endif %}
+    </div>
+</section>
+
+<!-- HOD's Message Section -->
+<section class="principal-section">
+    <div class="container">
+        <h2 class="section-title">HOD's Message</h2>
+        <div class="principal-content">
+            <div class="text-center">
+                <img src="{{ hod_message.image.url|default:'/static/media/hod photo.jpeg' }}" class="principal-image rounded-circle" alt="HOD">
+            </div>
+            <div class="ms-2" style="margin-left: 20px;">
+                <p>{{ hod_message.message|default:"Keeping in view the challenges posed to man by emerging trends of the present millennium, we have introduced a system of education that is based on the lines and parameters of modern approaches in the field of science and education." }}</p>
+                <p class="fst-italic">Welcome to GIGCCL Sports Portal</p>
+                <p class="fw-bold text-danger mb-0">{{ hod_message.name|default:"Professor Dr. Tahir" }}</p>
+                <p class="fst-italic text-secondary">HOD</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Access Section -->
+<section class="container mb-5">
+    <h2 class="section-title">Quick Access</h2>
+    <div class="row">
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <i class="bi bi-people fs-1 mb-3"></i>
+                    <h3 class="card-title h5 fw-bold">Sports Teams</h3>
+                    <p class="card-text">Explore our Sports Teams and their Achievements</p>
+                    <a href="{% url 'static_pages:teams' %}" class="feature-btn">View Teams</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <i class="bi bi-trophy fs-1 mb-3"></i>
+                    <h3 class="card-title h5 fw-bold">Sports Results</h3>
+                    <p class="card-text">Check the Latest Sports Tournament Results</p>
+                    <a href="{% url 'static_pages:scoreboard' %}" class="feature-btn">View Results</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <i class="bi bi-calendar-event fs-1 mb-3"></i>
+                    <h3 class="card-title h5 fw-bold">Sports Schedule</h3>
+                    <p class="card-text">View Upcoming Sports Events and Schedules</p>
+                    <a href="{% url 'sports_base:sports_schedules' %}" class="feature-btn">View Schedule</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <i class="bi bi-images fs-1 mb-3"></i>
+                    <h3 class="card-title h5 fw-bold">Sports Gallery</h3>
+                    <p class="card-text">Browse Photos and Videos from Recent Sports Events</p>
+                    <a href="{% url 'sports_base:sports_gallery' %}" class="feature-btn">View Gallery</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hero Slider
+        const slides = document.querySelectorAll('.hero-slide');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        if (slides.length > 0) {
+            showSlide(currentSlide);
+            setInterval(nextSlide, 5000);
+        }
+
+        // Smooth scroll for in-page links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

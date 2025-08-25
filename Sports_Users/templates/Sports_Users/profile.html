@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+:root {
+    --primary-color: #964734;
+    --primary-light: #ffe7d5;
+    --bg-light: #FFE2CD;
+    --text-main: #4A3B34;
+    --secondary-dark: #3A1C07;
+    --secondary-hover: #5C2E0A;
+}
+
+/* Background style for full page */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    background: url("{% static 'media/giccl.png' %}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+/* Dark overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.35); /* dark overlay */
+    backdrop-filter: blur(6px); /* blur effect */
+    z-index: -1;
+}
+
+/* Page container */
+#player-profile-page {
+    padding: 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Card styling */
+#player-profile-page .profile-wrapper {
+    max-width: 800px;
+    width: 100%;
+    background: #fff5ec;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px #00000026;
+    animation: fadeSlideIn 0.5s ease;
+}
+
+@keyframes fadeSlideIn {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+#player-profile-page .profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#player-profile-page .profile-pic {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: zoomIn 0.5s ease;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+#player-profile-page .profile-header h2 {
+    margin-top: 1rem;
+    color: var(--secondary-dark);
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+#player-profile-page .profile-header p {
+    font-style: italic;
+    color: var(--text-main);
+    margin: 0.2rem 0;
+}
+
+#player-profile-page .edit-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+#player-profile-page .edit-btn:hover {
+    background-color: var(--secondary-hover);
+    transform: translateY(-2px);
+}
+
+#player-profile-page .section-title {
+    background-color: var(--primary-light);
+    color: var(--secondary-dark);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: left;
+    font-size: 1.05rem;
+}
+
+#player-profile-page .profile-info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#player-profile-page .profile-info-table td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #eee;
+    color: var(--text-main);
+}
+
+#player-profile-page .profile-info-table td:first-child {
+    font-weight: 600;
+    color: var(--primary-color);
+    width: 35%;
+}
+
+#player-profile-page .note-strip {
+    background-color: var(--primary-light);
+    text-align: center;
+    padding: 0.7rem;
+    font-size: 0.9rem;
+    color: var(--secondary-dark);
+    font-weight: 500;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    #player-profile-page .profile-wrapper {
+        padding: 1.5rem;
+    }
+
+    #player-profile-page .profile-pic {
+        width: 100px;
+        height: 100px;
+    }
+
+    #player-profile-page .profile-header h2 {
+        font-size: 1.3rem;
+    }
+}
+</style>
+
+<div id="player-profile-page">
+    <div class="profile-wrapper">
+        <!-- Top Section -->
+        <div class="profile-header">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" class="profile-pic" alt="Profile Picture">
+            {% else %}
+                <img src="{% static 'media/image.png' %}" class="profile-pic" alt="Default Profile">
+            {% endif %}
+            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+            <p>{{ player.sport.name|default:"Sport" }}</p>
+            <a href="{% url 'Sports_Users:profile_edit' %}" class="edit-btn">Edit Profile</a>
+        </div>
+
+        <!-- User Information -->
+        <div class="section-title">User Information</div>
+        <table class="profile-info-table">
+            <tr><td>Name:</td><td>{{ user.first_name }}</td></tr>
+            <tr><td>Father Name:</td><td>{{ player.father_name|default:"Not provided" }}</td></tr>
+            <tr><td>CNIC:</td><td>{{ user.cnic|default:"Not provided" }}</td></tr>
+            <tr><td>Date of Birth:</td><td>{{ player.dob|date:"Y-m-d"|default:"Not provided" }}</td></tr>
+            <tr><td>Email:</td><td>{{ user.email|default:"Not provided" }}</td></tr>
+            <tr><td>Phone:</td><td>{{ user.phone_number|default:"Not provided" }}</td></tr>
+            <tr><td>Sports:</td><td>{{ player.sport.name|default:"Not provided" }}</td></tr>
+            <tr><td>College Roll No:</td><td>{{ player.college_roll_no|default:"Not provided" }}</td></tr>
+            <tr><td>Address:</td><td>{{ player.address|default:"Not provided" }}</td></tr>
+        </table>
+
+        <!-- Note -->
+        <div class="note-strip">
+            <strong>Note:</strong> Visit Sports Office if you find something wrong or incorrect.
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GIGCCL Sports Portal - Feedback{% endblock %}
+
+{% block content %}
+<style>
+    /* Background style for full page */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    background: url("{% static 'media/giccl.png' %}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+/* Dark overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.35); /* dark overlay */
+    backdrop-filter: blur(6px); /* blur effect */
+    z-index: -1;
+}
+
+    /* Container */
+    .feedback-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+
+    /* Card */
+    .feedback-form {
+        background: #fff5ec;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    .feedback-form:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Heading inside card */
+    .card-header-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.8rem;
+        color: #421d09;
+        text-align: center;
+        position: relative;
+        display: inline-block;
+        margin-bottom: 25px;
+    }
+
+    /* Dynamic underline matching heading width */
+    .card-header-title::after {
+        content: '';
+        display: block;
+        height: 3px;
+        background-color: #8B4513;
+        width: 100%;
+        margin: 6px auto 0;
+    }
+
+    /* Form styles */
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .form-group label {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        color: #421d09;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    /* Stars */
+    .stars {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 10px 0;
+    }
+    .stars i {
+        font-size: 30px;
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    .stars i.active {
+        color: #FFD700;
+    }
+
+    /* Inputs */
+    input[type="text"], input[type="email"], textarea, select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, textarea:focus, select:focus {
+        border-color: #8B4513;
+        outline: none;
+        box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+    }
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    /* Button */
+    .submit-btn {
+        background: #6e381dff;
+        color: #fff;
+        padding: 12px 30px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 18px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        display: block;
+        margin: 20px auto 0;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .submit-btn:hover {
+        background: #421d09;
+        transform: translateY(-2px);
+    }
+
+    /* Success message */
+    .success-message {
+        background: #4CAF50;
+        color: #fff;
+        text-align: center;
+        padding: 12px;
+        border-radius: 5px;
+        margin-top: 20px;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .feedback-container { padding: 15px; }
+        .card-header-title { font-size: 1.5rem; }
+        .feedback-form { padding: 20px; }
+        .stars i { font-size: 24px; }
+    }
+</style>
+
+<div class="feedback-container">
+    <div class="feedback-form">
+        <div style="text-align: center;">
+            <span class="card-header-title">Feedback and Suggestions</span>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_email">Email:</label>
+                <input type="email" class="form-control" id="id_email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_rating">Your Experience:</label>
+                <div class="stars">
+                    <i class="fas fa-star star" data-value="1"></i>
+                    <i class="fas fa-star star" data-value="2"></i>
+                    <i class="fas fa-star star" data-value="3"></i>
+                    <i class="fas fa-star star" data-value="4"></i>
+                    <i class="fas fa-star star" data-value="5"></i>
+                </div>
+                {{ form.rating }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_description">Description:</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_suggestions">Suggestions:</label>
+                {{ form.suggestions }}
+            </div>
+
+            <button type="submit" class="submit-btn">Submit</button>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="success-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<script>
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('id_rating');
+
+    stars.forEach(star => {
+        star.addEventListener('click', function () {
+            const value = parseInt(this.getAttribute('data-value'));
+            ratingInput.value = value;
+            stars.forEach((s, index) => {
+                s.classList.toggle('active', index < value);
+            });
+        });
+    });
+</script>
+{% endblock %}

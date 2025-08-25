@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 # settings.py
 import os 
 from pathlib import Path
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,16 +41,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Sports_Users', 
-    'static_pages',
+    'django.contrib.sites',           # for correct domain in emails
+    'pwa',
+    'widget_tweaks',
+    'Sports_Users',
     'sports_base',
+    'static_pages',
 ]
+SITE_ID = 1
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -142,6 +148,134 @@ STATICFILES_DIRS = [
 
 AUTH_USER_MODEL = 'Sports_Users.CustomUser'  # Use the correct app name and model name
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'Sports_Users.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# PWA Configurations
+
+PWA_APP_NAME = 'GIGCCL Sports Portal'
+PWA_APP_DESCRIPTION = "This is the Officially Sports Website for Islamia Government Graduate College, Civil Lines"
+PWA_APP_THEME_COLOR = '#ffe1c0'
+PWA_APP_BACKGROUND_COLOR = '#ffe1c0'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/images/my_app_icon_160x160.png',
+        'sizes': '160x160'
+    },
+    {
+        'src': '/static/images/my_app_icon_512x512.png',
+        'sizes': '512x512',
+        'type': 'image/png'
+    },
+    {
+      "src": "/static/images/my_app_icon_144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+        'src': '/static/images/my_app_icon_16x16.png',
+        'sizes': '16x16',
+        'type': 'image/png'
+    },
+    {
+        'src': '/static/images/my_app_icon_32x32.png',
+        'sizes': '32x32',
+        'type': 'image/png'
+    },
+    {
+      "src": "/static/images/my_app_icon_96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+        'src': '/static/images/my_app_icon_512x512.png',
+        'sizes': '512x512',
+        'type': 'image/png',
+        'purpose': 'maskable'
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': '/static/images/my_app_icon_160x160.png',
+        'sizes': '160x160'
+    }
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        'src': '/static/images/icons/splash-640x1136.png',
+        'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+    }
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-US'
+PWA_APP_SHORTCUTS = [
+    {
+        'name': 'GIGCCL',
+        'url': '/',
+        'description': 'Home page of GIGCCL Sports Portal',
+        'icons': [
+            {
+                'src': '/static/images/my_app_icon_96x96.png',
+                'sizes': '96x96',
+                'type': 'image/png'
+            }
+        ]
+    }
+]
+PWA_APP_SCREENSHOTS = [
+   {
+        'src': '/static/images/screenshots/desktop_home.png',
+        'sizes': '1280x720',
+        'type': 'image/png',
+        'form_factor': 'wide'  # Desktop View
+    },
+    {
+        'src': '/static/images/screenshots/mobile_home.png',
+        'sizes': '750x1334',
+        'type': 'image/png',
+        'form_factor': 'narrow'  # Mobile View
+    }
+]
+
+# --- Email (Gmail SMTP) ---
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "gigcclsportportal@gmail.com"
+EMAIL_HOST_PASSWORD = "dbro evez isbd bbzo"
+AUTH_USER_MODEL = "Sports_Users.CustomUser"
+# Use your real domain here
+DOMAIN = "127.0.0.1:8000"  # example: gigccl.com or localhost:8000
+PROTOCOL = "http"           # use https in production
+DEFAULT_FROM_EMAIL = "gigcclsportportal@gmail.com"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL  # for error emails
+EMAIL_SUBJECT_PREFIX = "[Sports Portal] "
+# Add this if not already
+SITE_ID = 1
+# PASSWORD_RESET_TIMEOUT = 60 * 60 * 60  # 1 day (optional)
+PASSWORD_RESET_TIMEOUT = 3600  # 1 hours for reset link validity
+
+POPPLER_PATH = r"C:\poppler\Library\bin"
+
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000", "http://localhost:8000"]

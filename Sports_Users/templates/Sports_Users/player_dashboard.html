@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Player Dashboard - GIGCCL Sports Portal{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url("{% static 'media/gigcclpic2.png' %}") no-repeat center center fixed;
+    background-size: cover;
+    backdrop-filter: blur(5px);
+    font-family: 'Poppins', sans-serif;
+  }
+  .dashboard-container {
+    padding: 2rem 0;
+  }
+  .card {
+    border-radius: 12px;
+    background: #fff8f1;
+    border: none;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Base heading style */
+  .card h5 {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block; /* underline matches only text width */
+  }
+
+  /* Player Profile heading underline (Yellow) */
+  .heading-profile::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 47.5%;
+    height: 3px;
+    background-color: #f5a623; /* yellow */
+    border-radius: 2px;
+  }
+
+  /* Certificates heading underline (Red) */
+  .heading-certificates::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 57.5%;
+    height: 3px;
+    background-color: #f5a623; /* red */
+    border-radius: 2px;
+  }
+
+  /* Notifications heading underline (Green) */
+  .heading-notifications::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 191px;
+    height: 3px;
+    background-color: #f5a623; /* green */
+    border-radius: 2px;
+  }
+
+  /* Team heading underline (Brown) */
+  .heading-team::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 15.2%;
+    height: 3px;
+    background-color: #f5a623; /* brown */
+    border-radius: 2px;
+  }
+
+  .prof-pic {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+  }
+  .team-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f5a623;
+  }
+  .team-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+  }
+  .team-header h6 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .certificate-card, .notification-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 0.8rem;
+    border-left: 4px solid #f5a623;
+  }
+  .certificate-card h6 {
+    margin: 0;
+    font-weight: 600;
+  }
+  .certificate-date, .notification-date {
+    font-size: 0.85rem;
+    color: #888;
+  }
+  .btn-icon {
+    border: none;
+    background: none;
+    color: #f5a623;
+    font-size: 1.2rem;
+    margin-left: 20px;
+  }
+  .btn-icon:hover {
+    color: #e09b20;
+  }
+  .table thead {
+    background: #f5a623;
+    color: white;
+  }
+</style>
+
+<div class="container dashboard-container">
+  <div class="row g-4">
+    <!-- Left Column -->
+    <div class="col-lg-4">
+      <!-- Player Profile -->
+      <div class="card p-4">
+        <h5 class="heading-profile">Player Profile</h5>
+        <div class="text-center mb-3">
+          {% if player.user.profile_picture %}
+            <img src="{{ player.user.profile_picture.url }}" class="prof-pic" alt="Profile Picture">
+          {% else %}
+            <i class="fas fa-user-circle fa-5x text-secondary"></i>
+          {% endif %}
+        </div>
+        <h6 class="text-center">{{ player.user.first_name }} {{ player.user.last_name }}</h6>
+        <p><strong>Email:</strong> {{ player.user.email|default:"Not provided" }}</p>
+        <p><strong>Role:</strong> Player</p>
+        <p><strong>Sport:</strong> {{ player.sport.name|default:"Not assigned" }}</p>
+        <p><strong>College Roll No:</strong> {{ player.college_roll_no|default:"Not provided" }}</p>
+        <div class="text-center mt-2">
+          <a href="{% url 'Sports_Users:player_logout' %}" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+      </div>
+
+      <!-- Certificates -->
+      <div class="card p-4 mt-4">
+        <h5 class="heading-certificates">Your Certificates</h5>
+        {% for certificate in certificates %}
+          <div class="certificate-card d-flex justify-content-between align-items-center mb-2">
+            <div>
+              <h6>{{ certificate.title }}</h6>
+              <div class="certificate-date">{{ certificate.uploaded_at|date:"F d, Y, h:i A" }}</div>
+            </div>
+            <div class="d-flex">
+              <a href="{% url 'Sports_Users:certificate_view' certificate.id %}" class="btn btn-primary btn-sm">View</a>
+              <a href="{% url 'Sports_Users:download_certificate' certificate.id %}" class="btn-icon" title="Download">
+                <i class="fas fa-download"></i>
+              </a>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted">No certificates available.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-8">
+      <!-- Notifications -->
+      <div class="card p-4 mb-4">
+        <h5 class="heading-notifications">Your Notifications</h5>
+        {% for notification in notifications %}
+          <div class="notification-card mb-2">
+            <h6>{{ notification.title }}</h6>
+            <p>{{ notification.message|truncatewords:30 }}</p>
+            <div class="notification-date">{{ notification.created_at|date:"F d, Y, h:i A" }}</div>
+          </div>
+        {% empty %}
+          <p class="text-muted">No notifications available.</p>
+        {% endfor %}
+        <div class="text-end mt-3">
+          <a href="{% url 'sports_base:notification_list' %}" class="btn btn-warning btn-sm">View All Notifications</a>
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="card p-4">
+        <h5 class="heading-team">Your Team</h5>
+        {% if team %}
+          <div class="team-header">
+            {% if team.logo %}
+              <img src="{{ team.logo.url }}" alt="{{ team.name }} Logo" class="team-logo">
+            {% else %}
+              <img src="{% static 'media/logo.png' %}" alt="Default Logo" class="team-logo">
+            {% endif %}
+            <h6><strong>{{ team.name }}</strong></h6>
+          </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Coach</th>
+                <th>Team Members</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ team.coach.name|default:"Not assigned" }}</td>
+                <td>
+                  {% for member in team.players.all %}
+                    {{ member.user.first_name }} {{ member.user.last_name }} [{{ member.sport.name|default:"Not assigned" }}]<br>
+                  {% endfor %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        {% else %}
+          <p class="text-muted">No team assigned.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
