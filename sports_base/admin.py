@@ -1,5 +1,5 @@
-from django.contrib import admin
 from django import forms
+from django.contrib import admin
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from .models import Sport, Team, MatchResult, Event, Notification, SportSchedule, SportGallery, Feedback, Coach
 from Sports_Users.models import CustomUser, Player
@@ -20,11 +20,25 @@ class TeamAdminForm(forms.ModelForm):
         widgets = {
             'sport': forms.Select,  # Use dropdown for sport
             'coach': forms.Select,  # Use dropdown for coach
+            'players': FilteredSelectMultiple("Players", is_stacked=False),  # Ensure multi-select widget
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['players'].queryset = Player.objects.filter(user__is_player=True)
+        # Filter players based on selected sport
+        if 'sport' in self.data:
+            try:
+                sport_id = int(self.data.get('sport'))
+                self.fields['players'].queryset = Player.objects.filter(sport_id=sport_id, user__is_player=True)
+            except (ValueError, TypeError):
+                # Fallback to all players if sport is not selected or invalid
+                self.fields['players'].queryset = Player.objects.filter(user__is_player=True)
+        elif self.instance.pk and self.instance.sport:
+            # For existing team, filter players by the team's sport
+            self.fields['players'].queryset = Player.objects.filter(sport=self.instance.sport, user__is_player=True)
+        else:
+            # Default to all players if no sport is selected
+            self.fields['players'].queryset = Player.objects.filter(user__is_player=True)
         # Filter coaches to only those associated with the selected sport
         if 'sport' in self.data:
             try:
